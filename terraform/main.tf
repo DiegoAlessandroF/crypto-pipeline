@@ -87,3 +87,57 @@ resource "aws_security_group" "ec2_sg" {
     Project = "crypto-pipeline"
   }
 }
+
+resource "aws_iam_role" "ec2_role" {
+  name = "crypto-pipeline-ec2-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = {
+    Project = "crypto-pipeline"
+  }
+}
+
+resource "aws_iam_role_policy" "ec2_permissions" {
+  name = "crypto-pipeline-ec2-permissions"
+  role = aws_iam_role.ec2_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.raw_data.arn,
+          "${aws_s3_bucket.raw_data.arn}/*"
+        ]
+      },
+      {
+        Effect   = "Allow"
+        Action   = "redshift-serverless:*"
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "crypto-pipeline-ec2-profile"
+  role = aws_iam_role.ec2_role.name
+}
