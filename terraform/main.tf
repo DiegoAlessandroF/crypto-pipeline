@@ -174,3 +174,13 @@ resource "aws_instance" "crypto_pipeline" {
     Project = "crypto-pipeline"
   }
 }
+
+resource "aws_eip" "crypto_pipeline" {
+  instance = aws_instance.crypto_pipeline.id
+  domain   = "vpc"
+
+  tags = {
+    Name    = "crypto-pipeline-eip"
+    Project = "crypto-pipeline"
+  }
+}
