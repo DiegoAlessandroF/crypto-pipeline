@@ -2,7 +2,7 @@ import json
 import websocket
 
 
-SOCKET_URL = "wss://stream.binance.com:9443/stream?streams=btcusdt@trade/ethusdt@trade/solusdt@trade"
+SOCKET_URL = "wss://stream.binance.us:9443/stream?streams=btcusdt@trade/ethusdt@trade/solusdt@trade"
 
 
 def on_message(ws, message):
