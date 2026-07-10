@@ -32,6 +32,9 @@ services:
     command: >
       /opt/spark/bin/spark-submit
       --master local[*]
-      --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1
+      --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,io.delta:delta-spark_2.12:3.3.2,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262
       --conf spark.jars.ivy=/tmp/.ivy2
-      /app/spark_streaming.py
+      --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension
+      --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog
+      --conf spark.sql.shuffle.partitions=4
+      /app/spark_streaming.py 
