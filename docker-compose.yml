@@ -38,3 +38,16 @@ services:
       --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog
       --conf spark.sql.shuffle.partitions=4
       /app/spark_streaming.py
+
+  spark-load:
+    image: apache/spark:3.5.1-python3
+    profiles: ["jobs"]
+    volumes:
+      - ./ingestion:/app
+    command: >
+      /opt/spark/bin/spark-submit
+      --master local[*]
+      --packages io.delta:delta-spark_2.12:3.2.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262
+      --conf spark.jars.ivy=/tmp/.ivy2
+      /app/load_redshift.py
+
